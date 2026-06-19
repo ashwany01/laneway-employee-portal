@@ -5,6 +5,7 @@ import com.laneway.employee_portal.repository.EmployeeRepository;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,9 +15,11 @@ import java.util.List;
 public class EmployeeController {
 
     private final EmployeeRepository employeeRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public EmployeeController(EmployeeRepository employeeRepository) {
+    public EmployeeController(EmployeeRepository employeeRepository, PasswordEncoder passwordEncoder) {
         this.employeeRepository = employeeRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @GetMapping
@@ -39,6 +42,7 @@ public class EmployeeController {
                     .body("An employee with this email already exists: " + employee.getEmail());
         }
         employee.setDeleted(false);
+        employee.setPassword(passwordEncoder.encode(employee.getPassword()));
         Employee saved = employeeRepository.save(employee);
         return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }
@@ -57,6 +61,7 @@ public class EmployeeController {
                     employee.setManager(updatedEmployee.getManager());
                     employee.setDateOfJoining(updatedEmployee.getDateOfJoining());
                     employee.setEmploymentStatus(updatedEmployee.getEmploymentStatus());
+                    employee.setPassword(passwordEncoder.encode(updatedEmployee.getPassword()));
                     Employee saved = employeeRepository.save(employee);
                     return ResponseEntity.ok(saved);
                 })

@@ -57,6 +57,11 @@ public class ProjectAssignmentController {
                     .body("Employee not found with id: " + request.getEmployeeId());
         }
 
+        if (employee.isDeleted()) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body("Cannot assign " + employee.getName() + " to a project: this employee has exited and is no longer active.");
+        }
+
         Project project = projectRepository.findById(request.getProjectId()).orElse(null);
         if (project == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
