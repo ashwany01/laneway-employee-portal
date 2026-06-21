@@ -17,10 +17,6 @@ public class ProjectAssignmentService {
         this.projectAssignmentRepository = projectAssignmentRepository;
     }
 
-    /**
-     * Checks if two date ranges overlap.
-     * A null endDate is treated as "ongoing indefinitely" (open-ended).
-     */
     public boolean datesOverlap(LocalDate startA, LocalDate endA, LocalDate startB, LocalDate endB) {
         LocalDate effectiveEndA = (endA == null) ? LocalDate.MAX : endA;
         LocalDate effectiveEndB = (endB == null) ? LocalDate.MAX : endB;
@@ -31,10 +27,6 @@ public class ProjectAssignmentService {
         return startsBeforeOtherEnds && endsAfterOtherStarts;
     }
 
-    /**
-     * Calculates an employee's total allocation percentage across all
-     * existing assignments whose project dates overlap with the given new project.
-     */
     public int calculateOverlappingAllocation(Long employeeId, Project newProject) {
         List<ProjectAssignment> existingAssignments = projectAssignmentRepository.findByEmployeeId(employeeId);
 
@@ -46,6 +38,22 @@ public class ProjectAssignmentService {
                     newProject.getStartDate(), newProject.getEndDate()
             );
             if (overlaps) {
+                total += assignment.getAllocationPercentage();
+            }
+        }
+        return total;
+    }
+
+    public int calculateCurrentTotalAllocation(Long employeeId) {
+        List<ProjectAssignment> assignments = projectAssignmentRepository.findByEmployeeId(employeeId);
+        LocalDate today = LocalDate.now();
+
+        int total = 0;
+        for (ProjectAssignment assignment : assignments) {
+            Project project = assignment.getProject();
+            boolean isCurrentlyActive = !project.getStartDate().isAfter(today)
+                    && (project.getEndDate() == null || !project.getEndDate().isBefore(today));
+            if (isCurrentlyActive) {
                 total += assignment.getAllocationPercentage();
             }
         }
