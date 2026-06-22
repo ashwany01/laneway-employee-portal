@@ -1,5 +1,7 @@
 # Laneway Employee Management Portal
 
+Frontend repository: https://github.com/ashwany01/laneway-employee-portal-ui
+
 A full-stack internal portal for managing employees, departments, projects, and staffing allocation across Laneway's distributed team (Kottayam HQ, Bangalore, and Remote).
 
 ## Tech Stack
@@ -17,7 +19,7 @@ A full-stack internal portal for managing employees, departments, projects, and 
 4. Backend runs on `http://localhost:8080`.
 
 ### Frontend
-1. Navigate to the `employee-portal-ui` folder.
+1. Navigate to the `employee-portal-ui` folder (separate repository, linked above).
 2. Run `npm install` then `npm run dev`.
 3. Frontend runs on `http://localhost:5173`.
 4. Backend CORS is configured to allow requests from this address.
